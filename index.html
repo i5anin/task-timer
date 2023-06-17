@@ -65,13 +65,52 @@
                 }
 
                 h1 {
-                    font-size: 20px;
+                    font-size: 18px;
+                }
+
+                #task-form {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: stretch;
                 }
 
                 input[type="text"],
                 input[type="datetime-local"],
                 button {
+                    margin-bottom: 10px;
                     width: 100%;
+                }
+            }
+
+            /* Адаптивность для планшетов */
+            @media (min-width: 481px) and (max-width: 1024px) {
+                body {
+                    padding: 30px;
+                }
+
+                h1 {
+                    font-size: 24px;
+                }
+
+                #task-form {
+                    max-width: 400px;
+                    margin: 0 auto;
+                }
+            }
+
+            /* Адаптивность для десктопных устройств */
+            @media (min-width: 1025px) {
+                body {
+                    padding: 50px;
+                }
+
+                h1 {
+                    font-size: 36px;
+                }
+
+                #task-form {
+                    max-width: 600px;
+                    margin: 0 auto;
                 }
             }
         </style>
