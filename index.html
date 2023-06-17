@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Таймер задач</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+                background-color: #333;
+                color: #fff;
+            }
+
+            h1 {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            #task-form {
+                margin-bottom: 20px;
+            }
+
+            #task-list {
+                list-style-type: none;
+                padding: 0;
+            }
+
+            .task-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px;
+                border-bottom: 1px solid #ccc;
+                background-color: #444;
+            }
+
+            .task-item .task-name {
+                flex: 1;
+            }
+
+            .task-item .task-time {
+                padding: 10px;
+                margin-left: 10px;
+                color: #999;
+            }
+
+            .task-item .task-actions {
+                flex-shrink: 0;
+            }
+
+            input[type="text"],
+            input[type="datetime-local"],
+            button {
+                padding: 5px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>Менеджер задач</h1>
+
+        <form id="task-form">
+            <input type="text" id="task-name" placeholder="Название задачи" required>
+            <input type="datetime-local" id="task-due-date" required>
+            <button type="submit">Добавить задачу</button>
+        </form>
+
+        <ul id="task-list"></ul>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                // Получаем задачи из локального хранилища или инициализируем пустой массив
+                var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+                // Рендерим задачи
+                renderTasks();
+
+                // Обработка отправки формы
+                $('#task-form').submit(function (event) {
+                    event.preventDefault();
+                    var taskName = $('#task-name').val();
+                    var taskDueDate = $('#task-due-date').val();
+
+                    // Создаем новый объект задачи
+                    var task = {
+                        name: taskName,
+                        dueDate: taskDueDate
+                    };
+
+                    // Добавляем задачу в массив
+                    tasks.push(task);
+
+                    // Сохраняем задачи в локальное хранилище
+                    localStorage.setItem('tasks', JSON.stringify(tasks));
+
+                    // Очищаем поля формы
+                    $('#task-name').val('');
+                    $('#task-due-date').val('');
+
+                    // Рендерим задачи
+                    renderTasks();
+                });
+
+                // Рендерим задачи
+                function renderTasks() {
+                    var taskList = $('#task-list');
+                    taskList.empty();
+
+                    // Сортируем задачи по дате выполнения
+                    tasks.sort(function (a, b) {
+                        return moment(a.dueDate).diff(moment(b.dueDate));
+                    });
+
+                    // Рендерим каждую задачу
+                    tasks.forEach(function (task) {
+                        var taskItem = $('<li class="task-item"></li>');
+                        var taskName = $('<div class="task-name"></div>').text(task.name);
+                        var taskTime = $('<div class="task-time"></div>');
+                        var taskActions = $('<div class="task-actions"></div>');
+                        var deleteButton = $('<button><i class="fas fa-trash"></i></button>').click(function () {
+                            deleteTask(task);
+                        });
+
+                        taskActions.append(deleteButton);
+                        taskItem.append(taskName, taskTime, taskActions);
+                        taskList.append(taskItem);
+
+                        // Обновляем оставшееся время каждую секунду
+                        setInterval(function () {
+                            taskTime.text(formatTimeRemaining(task.dueDate));
+                        }, 1000);
+                    });
+                }
+
+                // Удаление задачи
+                function deleteTask(task) {
+                    tasks = tasks.filter(function (item) {
+                        return item !== task;
+                    });
+
+                    // Сохраняем задачи в локальное хранилище
+                    localStorage.setItem('tasks', JSON.stringify(tasks));
+
+                    // Рендерим задачи
+                    renderTasks();
+                }
+
+                // Форматирование оставшегося времени
+                function formatTimeRemaining(dueDate) {
+                    var now = moment();
+                    var due = moment(dueDate);
+                    var duration = moment.duration(due.diff(now));
+
+                    var days = Math.floor(duration.asDays());
+                    var hours = duration.hours();
+                    var minutes = duration.minutes();
+                    var seconds = duration.seconds();
+
+                    var timeRemaining = '';
+
+                    if (days > 0) {
+                        timeRemaining += days + 'д ';
+                    }
+
+                    if (hours > 0) {
+                        timeRemaining += hours + 'ч ';
+                    }
+
+                    if (minutes > 0) {
+                        timeRemaining += minutes + 'м ';
+                    }
+
+                    if (seconds > 0) {
+                        timeRemaining += seconds + 'с';
+                    }
+
+                    return timeRemaining;
+                }
+            });
+        </script>
+    </body>
+
+</html>
