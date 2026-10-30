@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "2026-10-30T14:47:11.360Z",
+  "project": "task-timer",
+  "root": ".",
+  "method": "static-local-index",
+  "limitations": [
+    "Нет динамических вызовов и сетевых интеграций",
+    "Сверять sha256 и evidence.line с текущими исходниками",
+    "Наличие зависимости не доказывает работоспособность"
+  ],
+  "nodes": [
+    {
+      "id": "project:task-timer",
+      "type": "project",
+      "name": "task-timer"
+    },
+    {
+      "id": "project:task-timer/file:README.md",
+      "type": "file",
+      "path": "README.md",
+      "sha256": "46498d91b504d5afe0bc294277a5f50bd2c0a96cc63c4b63cd91ccc1e7ca4c19",
+      "bytes": 67
+    }
+  ],
+  "edges": [
+    {
+      "source": "project:task-timer",
+      "target": "project:task-timer/file:README.md",
+      "relation": "contains",
+      "evidence": {
+        "path": "README.md"
+      },
+      "method": "filesystem"
+    }
+  ]
+}
